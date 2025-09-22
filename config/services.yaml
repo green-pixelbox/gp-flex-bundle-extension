@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  GreenPixelbox\GpFlexBundleExtension\:
+    resource: ../src
+    exclude: ../src/{ContaoManager,GpFlexBundleExtension.php}

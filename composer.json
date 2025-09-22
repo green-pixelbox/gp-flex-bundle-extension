@@ -1,0 +1,29 @@
+{
+  "name": "green-pixelbox/gp-flex-bundle-extension",
+  "description": "Erweiterung für tdoescher/flex-bundle: Für eine einfachere Bedienung bei Verwendung von Flexbox (Bootstrap) Layoutsystem. Befüllt die Werte für die einzelnen Viewports nach Angabe Anzahl der Spalten.",
+  "keywords":["contao","flex-bundle","contentelement","Erweiterung", "tdoescher", "flexbox", "layoutsystem", "spalten", "grid"],
+  "type": "contao-bundle",
+  "homepage":"http://www.green-pixelbox.de",
+  "license": "LGPL-3.0-or-later",
+  "authors":[
+    {
+      "name":"Peter Friedhoff",
+      "email":"info@green-pixelbox.de",
+      "role":"Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "GreenPixelbox\\GpFlexBundleExtension\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.1",
+    "contao/core-bundle": "^5.3",
+    "tdoescher/flex-bundle": "^3.4"
+  },
+  "extra": {
+    "contao-manager-plugin": "GreenPixelbox\\GpFlexBundleExtension\\ContaoManager\\Plugin"
+  },
+  "version": "1.0.1"
+}
