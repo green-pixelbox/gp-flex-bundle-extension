@@ -22,8 +22,9 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['flex_xs']['eval']['tl_class'] = 'w50
 $GLOBALS['TL_DCA']['tl_content']['fields']['gp_flex_preset'] = [
     'exclude'   => true,
     'inputType' => 'select',
-    'options'   => ['2', '3', '4', '6', 'a'],
+    'options'   => ['2', '3', '4', '6', 'a', '1'],
     'reference' => [
+        '1' => 'alle Spalten in eine Zeile (Werte leeren)',
         '2' => '2-spaltig',
         '3' => '3-spaltig',
         '4' => '4-spaltig',
@@ -68,6 +69,16 @@ class tl_content_flex
      */
     public function applyFlexPreset($value, $dc)
     {
+        // Nur ausführen, wenn es sich um einen submitOnChange-Reload (AJAX/Widget-Reload) handelt
+        // und nicht beim normalen "Speichern".
+        if (
+            !isset($_POST['REQUEST_TOKEN']) // minimaler Schutz, kein regulärer Form-Submit ohne Token
+            || empty($_POST['SUBMIT_TYPE']) // Contao setzt bei onchange-Reload typischerweise SUBMIT_TYPE / FORM_SUBMIT Marker
+            || ($_POST['SUBMIT_TYPE'] ?? '') !== 'auto' // 'auto' = submitOnChange; normale Saves sind leer/anders
+        ) {
+            return $value;
+        }
+
         if (!$dc || !$dc->activeRecord || !$value) {
             return $value;
         }
@@ -75,6 +86,7 @@ class tl_content_flex
         // Mapping der Presets zu gewünschten Werten
         // Hinweis: Bei Bedarf anpassen
         $map = [
+            '1' => ['xs' => '', 'sm' => '', 'md' => '', 'lg' => '', 'xl' => '', 'xxl' => ''],
             '2' => ['xs' => '12', 'sm' => '6', 'md' => '', 'lg' => '', 'xl' => '', 'xxl' => ''],
             '3' => ['xs' => '12', 'sm' => '', 'md' => '6', 'lg' => '4', 'xl' => '', 'xxl' => ''],
             '4' => ['xs' => '12', 'sm' => '6', 'md' => '6', 'lg' => '4', 'xl' => '3', 'xxl' => ''],
