@@ -52,6 +52,19 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['gp_overview_flex_layout'] = [
     ],
 ];
 
+// Checkbox: erzeugt beim Speichern N Kind-Elemente (nur einmal, danach deaktiviert)
+$GLOBALS['TL_DCA']['tl_content']['fields']['gp_flex_create_children'] = [
+    'inputType' => 'checkbox',
+    'default'   => false,
+    'eval'      => [
+        'tl_class' => 'w50 m12',
+    ],
+    'save_callback' => [
+        ['tl_content_flex', 'createFlexChildren'],
+    ],
+    'sql' => ['type' => 'boolean', 'default' => false],
+];
+
 
 
 
@@ -166,6 +179,67 @@ class tl_content_flex
         PaletteManipulator::create()
             ->addField('gp_overview_flex_layout', 'flex_xxl', PaletteManipulator::POSITION_AFTER)
             ->applyToPalette('flex', 'tl_content');
+
+        PaletteManipulator::create()
+            ->addField('gp_flex_create_children', 'gp_flex_preset', PaletteManipulator::POSITION_AFTER)
+            ->applyToPalette('flex', 'tl_content');
+    }
+
+    /**
+     * Erzeugt beim Speichern N Kind-Content-Elemente vom Typ 'gp_design_element_group'
+     * als Kinder des aktuellen Flex-Containers — nur wenn Checkbox aktiv, Preset in
+     * {2,3,4,6} und noch keine Kinder existieren. Setzt die Checkbox anschließend auf ''.
+     */
+    public function createFlexChildren($value, $dc)
+    {
+        if (($_POST['SUBMIT_TYPE'] ?? '') === 'auto') {
+            return $value;
+        }
+        if (!$dc || !$dc->activeRecord) {
+            return $value;
+        }
+        if ($value !== '1') {
+            return $value;
+        }
+        if (($dc->activeRecord->flex_bootstrap ?? '') !== '1') {
+            return $value;
+        }
+
+        $countMap = ['2' => 2, '3' => 3, '4' => 4, '6' => 6];
+        $preset   = (string) ($dc->activeRecord->gp_flex_preset ?? '');
+        if (!isset($countMap[$preset])) {
+            return $value;
+        }
+        $count = $countMap[$preset];
+
+        $db       = Database::getInstance();
+        $existing = $db
+            ->prepare("SELECT COUNT(*) AS cnt FROM tl_content WHERE pid=? AND ptable=?")
+            ->execute($dc->activeRecord->id, 'tl_content')
+            ->fetchAssoc();
+        if ((int) ($existing['cnt'] ?? 0) > 0) {
+            return $value;
+        }
+
+        $now = time();
+        for ($i = 1; $i <= $count; $i++) {
+            $db
+                ->prepare("INSERT INTO tl_content (pid, ptable, sorting, tstamp, type) VALUES (?, ?, ?, ?, ?)")
+                ->execute(
+                    $dc->activeRecord->id,
+                    'tl_content',
+                    $i * 128,
+                    $now,
+                    'gp_design_element_group'
+                );
+        }
+
+        $dc->activeRecord->gp_flex_create_children = 0;
+        $db
+            ->prepare("UPDATE tl_content SET gp_flex_create_children=? WHERE id=?")
+            ->execute(0, $dc->activeRecord->id);
+
+        return 0;
     }
 
 

@@ -9,6 +9,7 @@
  */
 
 $GLOBALS['TL_LANG']['tl_content']['gp_flex_preset'] = ['Anzahl der Spalten - Folgende Felder werden mit Werten befüllt', 'Achtung! Überschreibt alle Werte innerhalb der folgenden Felder direkt nach Auswahl der Spalten! Für Flexbox (Bootstrap). Spaltenanzahl gilt für Desktopansicht (über 1400 Pixel Browserbreite), bei schmaleren Endgeräten wird die Spaltenanzahl verringert.'];
+$GLOBALS['TL_LANG']['tl_content']['gp_flex_create_children'] = ['Kind-Elemente automatisch beim Speichern erzeugen', 'Erzeugt Elementgruppe GP nach Anzahl der Spalten, wenn noch keine Elemente in diesem Flex-Element vorhanden sind.'];
 $GLOBALS['TL_LANG']['tl_content']['flex_xs'] = ['für alle Fenster-Breiten (XS)', 'Bsp.: "12" für eine Spalte über 100%'];
 $GLOBALS['TL_LANG']['tl_content']['flex_sm'] = ['ab 576 Pixel Fensterbreite (SM)', 'Bsp.: "3:9" für zwei Spalten 25% / 75%'];
 $GLOBALS['TL_LANG']['tl_content']['flex_md'] = ['ab 768 Pixel Fensterbreite (MD)', 'Bsp.: "3:3:6" für drei Spalten 25% / 25% / 50%'];
